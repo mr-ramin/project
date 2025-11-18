@@ -1,0 +1,278 @@
+<!DOCTYPE html><html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ورزش‌ها و تغذیه</title>
+<style>
+:root{
+  --bg1:#b26bff;
+  --bg2:#ff77c6;
+  --card-bg:rgba(255,255,255,0.12);
+  --glass:rgba(255,255,255,0.08);
+  --placeholder:#ffffff20;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Tahoma,system-ui,Arial;
+  direction:rtl;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}/* header */ header{ display:flex; align-items:center; justify-content:space-between; padding:12px 18px; background:linear-gradient(180deg,rgba(0,0,0,0.18),transparent); gap:12px; } .brand{font-weight:700;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .search-wrapper{display:flex;align-items:center;gap:8px} #searchToggle{ background:transparent; border:1px solid rgba(255,255,255,0.18); padding:0 12px; border-radius:10px; cursor:pointer; height:38px; display:inline-flex; align-items:center; gap:8px; } #searchBox{ display:none; height:38px; line-height:38px; padding:0 12px; border-radius:10px; border:none; outline:none; background:rgba(255,255,255,0.06); color:#fff; width:260px; max-width:40vw; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+
+/* main */ .container{max-width:1100px;margin:20px auto;padding:0 16px}
+
+/* grid & card */ .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; } @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}} @media(max-width:600px){.grid{grid-template-columns:1fr}}
+
+.card{ background:var(--card-bg); padding:14px; border-radius:14px; backdrop-filter:blur(6px); cursor:pointer; transition:transform .18s, box-shadow .18s; display:flex; flex-direction:column; gap:10px; min-height:260px; } .card:hover{transform:translateY(-6px);box-shadow:0 6px 20px rgba(0,0,0,0.15)} .img-wrap{ width:100%; height:180px; border-radius:10px; overflow:hidden; position:relative; background:var(--placeholder); display:block; } .img-wrap::after{ content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.03)); } .img-wrap img{ width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .28s ease; } .img-wrap.img-loaded img{opacity:1} .card h3{margin:0;font-size:18px} .meta{font-size:13px;opacity:0.95}
+
+/* pagination */ .pagination{display:flex;justify-content:center;gap:10px;margin:20px 0} .btn{ background:#fff;color:#222;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;height:38px; }
+
+/* detail */ .detail{ background:linear-gradient(180deg,rgba(0,0,0,0.25),transparent); padding:18px;border-radius:14px; } .detail-header{ display:flex;gap:14px;align-items:center;flex-wrap:wrap; } .detail-header .img-wrap{width:220px;height:120px;flex-shrink:0;border-radius:10px} @media(max-width:600px){.detail-header .img-wrap{width:100%;height:180px}} .detail-body{margin-top:14px} .section{background:var(--glass);padding:12px;border-radius:10px;margin-bottom:12px} .back{background:transparent;border:1px solid rgba(255,255,255,0.18);padding:0 12px;border-radius:8px;color:#fff;cursor:pointer;height:38px;display:inline-flex;align-items:center}
+
+/* utility */ .hidden{display:none} .center{text-align:center} </style>
+
+</head>
+<body><header>
+  <div class="brand" id="brandTitle">پروژه: ورزش‌ها و تغذیه</div>
+  <div class="search-wrapper">
+    <button id="searchToggle">جستجو ورزش</button>
+    <input id="searchBox" placeholder="مثال: بدنسازی یا یوگا" autocomplete="off" />
+  </div>
+</header><main class="container">
+  <div id="content"></div>
+  <div class="pagination" id="pagination"></div>
+</main><script>
+const sports = [
+  {id:1,name:'بدنسازی',img:'https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg',intro:'تمرینات مقاومتی برای افزایش حجم و قدرت عضلانی.',benefits:['افزایش قدرت و توده عضلانی','بالا بردن متابولیسم','بهبود استقامت'],men:'ایده‌آل برای افزایش توده، تمرین با وزنه و کالری کنترل‌شده.',women:'می‌تواند به فرم‌دهی و کاهش چربی کمک کند؛ تمرینات ترکیبی با وزنه‌های متوسط.',kids:'برای نوجوانان تمرینات بدنسازی سبک و تحت نظر مربی مناسب است.',diet:'پروتئین بالا، کربوهیدرات کافی، چربی سالم.'},
+  {id:2,name:'یوگا',img:'https://images.pexels.com/photos/3757370/pexels-photo-3757370.jpeg',intro:'تمریناتی برای انعطاف، تعادل و آرامش ذهنی.',benefits:['کاهش استرس','افزایش انعطاف‌پذیری','بهبود وضعیت بدنی'],men:'کمک به تعادل و کاهش تنش عضلانی.',women:'مناسب برای کاهش استرس و بهبود سلامت کلی؛ می‌تواند در بارداری سبک شود.',kids:'یوگا کودکان با بازی و حرکات ساده مفید است.',diet:'غذاهای سبک، آب‌رسانی مناسب، میوه و سبزیجات.'},
+  {id:3,name:'دویدن',img:'https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg',intro:'ورزش هوازی ساده و قابل دسترس برای همه.',benefits:['بهبود سلامت قلبی-عروقی','کاهش وزن','افزایش تحمل'],men:'تمرینات فاصله‌ای برای بهبود سرعت و ظرفیت هوازی.',women:'مفید برای حفظ فرم و سلامت قلبی، مراقبت از مفاصل مهم است.',kids:'دویدن ملایم برای کودکان مفید است، فشار زیاد مناسب نیست.',diet:'کربوهیدرات قبل تمرین، آب کافی، میان‌وعده‌های سبک.'},
+  {id:4,name:'شنا',img:'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg',intro:'ورزش کم‌فشار و کامل که کل بدن را درگیر می‌کند.',benefits:['تمرین هوازی و قدرتی همزمان','کم‌فشار برای مفاصل','بهبود تنفس'],men:'تقویت بالاتنه و توان هوازی.',women:'مناسب برای همه سنین، کاهش فشار روی مفاصل.',kids:'شنا مهارتی حیاتی؛ آموزش از کودکی توصیه می‌شود.',diet:'خوراکی سبک قبل و بعد شنا، هیدراتاسیون مهم.'},
+  {id:5,name:'فوتبال',img:'https://images.pexels.com/photos/47730/the-ball-stadion-football-the-pitch-47730.jpeg',intro:'ورزش تیمی محبوب با انرژی و کار گروهی.',benefits:['افزایش استقامت و چابکی','کار تیمی و مهارت‌های اجتماعی','سوزاندن کالری'],men:'تمرینات قدرتی-سرعتی همراه تاکتیک تیمی.',women:'افزایش قدرت پا و استقامت؛ برنامه‌های فنی-تاکتیکی.',kids:'بازی‌محور بودن مهم است؛ تمرکز بر مهارت‌های پایه.',diet:'کربوهیدرات قبل بازی، پروتئین برای بازسازی بعدی.'},
+  {id:6,name:'بسکتبال',img:'https://images.pexels.com/photos/358042/pexels-photo-358042.jpeg',intro:'ورزش تیمی سریع با بهره‌وری بالا از چابکی و پرش.',benefits:['تقویت سرعت و پرش','هماهنگی چشم و دست','قلبی-عروقی'],men:'تمرینات انفجاری و کار تکنیکی توپ.',women:'تمرینات سرعت و استقامت همراه با تمرین پرش.',kids:'بازی‌محور و تمرین مهارت‌های پایه.',diet:'کربوهیدرات برای انرژی، الکترولیت‌ها برای تعادل.'},
+  {id:7,name:'رزمی (کیک‌بوکسینگ/جودو)',img:'https://images.pexels.com/photos/260447/pexels-photo-260447.jpeg',intro:'تمرینات ترکیبی قدرت، سرعت و مهارت دفاعی.',benefits:['قدرت انفجاری','خوددفاع و اعتماد به نفس','هماهنگی حرکتی'],men:'تمرین‌های تحمل و تمرکز بر قدرت و تکنیک.',women:'مناسب برای افزایش اعتمادبه‌نفس و آمادگی جسمانی.',kids:'کلاس‌های رزمی نظم و کنترل را به کودکان می‌آموزد.',diet:'پروتئین کافی، کربوهیدرات برای تمرینات سنگین.'},
+  {id:8,name:'دوچرخه‌سواری',img:'https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg',intro:'ورزش هوازی کم‌فشار که بیرون از خانه هم انجام می‌شود.',benefits:['تقویت پاها و قلب','دوستدار مفاصل نسبت به دویدن','چربی‌سوزی'],men:'تمرینات تابستانه برای استقامت و سرعت.',women:'ایده‌آل برای گردش و سلامت قلبی.',kids:'دوچرخه‌سواری خانوادگی و مهارت توازن.',diet:'آب، میان‌وعده انرژی‌زا مثل موز یا بار گرانولا.'},
+  {id:9,name:'کوهنوردی',img:'https://images.pexels.com/photos/2402921/pexels-photo-2402921.jpeg',intro:'ترکیبی از پیاده‌روی طولانی با چالش‌های فیزیکی و طبیعت‌گردی.',benefits:['تقویت قلب و ریه','کار با گروه و تاب‌آوری ذهنی','قرارگیری در طبیعت'],men:'تمرین استقامتی و آمادگی برای مسیرهای سخت.',women:'تقویت پاها و تناسب اندام همراه با لذت طبیعت.',kids:'گردش‌های کوتاه و آموزش ایمنی در طبیعت.',diet:'آب، پروتئین و کربوهیدرات برای طول مسیر؛ خوراکی سبک.'},
+  {id:10,name:'پیاده‌روی',img:'https://images.pexels.com/photos/442559/pexels-photo-442559.jpeg',intro:'ساده‌ترین و در دسترس‌ترین ورزش برای همه سنین.',benefits:['کاهش استرس و افزایش تحرک روزمره','کمک به سلامت قلب','قابل انجام برای همه'],men:'پیاده‌روی سریع برای کالری‌سوزی و بهبود قلب.',women:'ساده و ایمن؛ مناسب برای شروع هر برنامه ورزشی.',kids:'تشویق به فعالیت روزمره و بازی در فضای باز.',diet:'آب و هضم آسان؛ میان‌وعده سالم پس از پیاده‌روی طولانی.'}
+];
+
+let state = {mode:'list',page:1,perPage:6,query:'',detailId:null};
+const contentEl = document.getElementById('content');
+const paginationEl = document.getElementById('pagination');
+const searchToggle = document.getElementById('searchToggle');
+const searchBox = document.getElementById('searchBox');
+const brandTitle = document.getElementById('brandTitle');
+
+searchToggle.addEventListener('click', () => {
+  const visible = searchBox.style.display === 'inline-block';
+  if (!visible) {
+    searchBox.style.display = 'inline-block';
+    searchBox.focus();
+    brandTitle.style.display = 'none';
+    searchToggle.textContent = 'بستن';
+  } else {
+    searchBox.value = '';
+    state.query = '';
+    searchBox.style.display = 'none';
+    brandTitle.style.display = 'block';
+    searchToggle.textContent = 'جستجو ورزش';
+    state.page = 1;
+    render();
+  }
+});
+
+searchBox.addEventListener('input', e => {
+  state.query = e.target.value.trim();
+  state.page = 1;
+  render();
+});
+
+function filtered() {
+  if (!state.query) return sports.slice();
+  const q = state.query.toLowerCase();
+  return sports.filter(s => s.name.toLowerCase().includes(q) || s.intro.toLowerCase().includes(q));
+}
+
+function clearContent() {
+  contentEl.innerHTML = '';
+  paginationEl.innerHTML = '';
+}
+
+function createImgWrap(src, alt) {
+  const wrap = document.createElement('div');
+  wrap.className = 'img-wrap';
+  const img = document.createElement('img');
+  img.alt = alt || '';
+  img.src = src;
+  img.loading = 'lazy';
+  img.addEventListener('load', () => wrap.classList.add('img-loaded'));
+  img.addEventListener('error', () => {
+    if (img.src.indexOf('via.placeholder.com') === -1) img.src = 'https://via.placeholder.com/800x600?text=No+Image';
+    wrap.classList.add('img-loaded');
+  });
+  wrap.appendChild(img);
+  return wrap;
+}
+
+function renderList() {
+  const list = filtered();
+  const start = (state.page - 1) * state.perPage;
+  const pageItems = list.slice(start, start + state.perPage);
+
+  clearContent();
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  pageItems.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.tabIndex = 0;
+
+    const imgWrap = createImgWrap(s.img, s.name);
+    card.appendChild(imgWrap);
+
+    const h = document.createElement('h3');
+    h.textContent = s.name;
+    card.appendChild(h);
+
+    const m = document.createElement('div');
+    m.className = 'meta';
+    m.textContent = s.intro || '';
+    card.appendChild(m);
+
+    card.addEventListener('click', () => openDetail(s.id));
+    card.addEventListener('keypress', (e) => { if (e.key === 'Enter') openDetail(s.id); });
+
+    grid.appendChild(card);
+  });
+
+  contentEl.appendChild(grid);
+
+  const pages = Math.max(1, Math.ceil(list.length / state.perPage));
+  if (pages > 1) {
+    const prev = document.createElement('button');
+    prev.className = 'btn';
+    prev.textContent = 'قبلی';
+    prev.disabled = state.page === 1;
+    prev.onclick = () => { state.page--; render(); };
+
+    const next = document.createElement('button');
+    next.className = 'btn';
+    next.textContent = 'بعدی';
+    next.disabled = state.page === pages;
+    next.onclick = () => { state.page++; render(); };
+
+    const label = document.createElement('div');
+    label.style.alignSelf = 'center';
+    label.style.padding = '0 8px';
+    label.textContent = `${state.page} / ${pages}`;
+
+    paginationEl.appendChild(prev);
+    paginationEl.appendChild(label);
+    paginationEl.appendChild(next);
+  }
+}
+
+function openDetail(id) {
+  const s = sports.find(x => x.id === id);
+  if (!s) return;
+  state.mode = 'detail';
+  state.detailId = id;
+  renderDetail(s);
+}
+
+function renderDetail(s) {
+  clearContent();
+
+  const detail = document.createElement('div');
+  detail.className = 'detail';
+
+  const topBar = document.createElement('div');
+  topBar.style.display = 'flex';
+  topBar.style.justifyContent = 'space-between';
+  topBar.style.alignItems = 'center';
+  topBar.style.gap = '12px';
+  detail.appendChild(topBar);
+
+  const backWrap = document.createElement('div');
+  const backBtn = document.createElement('button');
+  backBtn.className = 'back';
+  backBtn.textContent = 'بازگشت';
+  backBtn.onclick = () => { state.mode = 'list'; state.detailId = null; render(); };
+  backWrap.appendChild(backBtn);
+  topBar.appendChild(backWrap);
+
+  const header = document.createElement('div');
+  header.className = 'detail-header';
+
+  const imgWrap = createImgWrap(s.img, s.name);
+  imgWrap.style.width = '';
+  imgWrap.style.height = '';
+  header.appendChild(imgWrap);
+
+  const meta = document.createElement('div');
+  meta.style.flex = '1';
+  meta.style.textAlign = 'right';
+  const title = document.createElement('h2');
+  title.style.margin = '0 0 6px';
+  title.textContent = s.name;
+  const intro = document.createElement('div');
+  intro.style.opacity = '0.95';
+  intro.textContent = s.intro || '';
+  meta.appendChild(title);
+  meta.appendChild(intro);
+  header.appendChild(meta);
+
+  detail.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'detail-body';
+
+  const sec1 = document.createElement('div');
+  sec1.className = 'section';
+  const h4a = document.createElement('h4');
+  h4a.textContent = 'فواید عمومی';
+  sec1.appendChild(h4a);
+  const ul = document.createElement('ul');
+  (s.benefits || []).forEach(b => { const li = document.createElement('li'); li.textContent = b; ul.appendChild(li); });
+  sec1.appendChild(ul);
+  body.appendChild(sec1);
+
+  const secM = document.createElement('div'); secM.className = 'section';
+  const h4m = document.createElement('h4'); h4m.textContent = 'برای آقایان'; secM.appendChild(h4m);
+  const pm = document.createElement('p'); pm.textContent = s.men || ''; secM.appendChild(pm); body.appendChild(secM);
+
+  const secW = document.createElement('div'); secW.className = 'section';
+  const h4w = document.createElement('h4'); h4w.textContent = 'برای خانم‌ها'; secW.appendChild(h4w);
+  const pw = document.createElement('p'); pw.textContent = s.women || ''; secW.appendChild(pw); body.appendChild(secW);
+
+  const secK = document.createElement('div'); secK.className = 'section';
+  const h4k = document.createElement('h4'); h4k.textContent = 'برای کودکان'; secK.appendChild(h4k);
+  const pk = document.createElement('p'); pk.textContent = s.kids || ''; secK.appendChild(pk); body.appendChild(secK);
+
+  const secD = document.createElement('div'); secD.className = 'section';
+  const h4d = document.createElement('h4'); h4d.textContent = 'تغذیه پیشنهادی'; secD.appendChild(h4d);
+  const pd = document.createElement('p'); pd.textContent = s.diet || ''; secD.appendChild(pd); body.appendChild(secD);
+
+  detail.appendChild(body);
+  contentEl.appendChild(detail);
+  paginationEl.innerHTML = '';
+}
+
+function render() {
+  if (state.mode === 'list') renderList();
+  else if (state.mode === 'detail') {
+    const s = sports.find(x => x.id === state.detailId);
+    if (s) renderDetail(s);
+    else { state.mode = 'list'; renderList(); }
+  }
+}
+
+render();
+</script></body>
+</html>
