@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2980b9">
+    <title>مسابقه کوییز</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Vazirmatn', sans-serif;
+        }
+
+        /* فونت فارسی رایگان */
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        .quiz-container {
+            background: #1e272e;
+            color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* انیمیشن fade */
+        .fade {
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* صفحه شروع */
+        .start-screen {
+            padding: 30px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .start-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .start-description {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+            line-height: 1.8;
+            max-width: 600px;
+        }
+
+        .start-btn, .restart-btn {
+            background: linear-gradient(135deg, #2980b9 0%, #2c3e50 100%);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .start-btn:hover, .restart-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(41, 128, 185, 0.5);
+        }
+
+        /* هدر */
+        .header {
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .timer {
+            background: #e74c3c;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        /* بخش سوال */
+        .question-section {
+            padding: 30px 40px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question-number {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #ecf0f1;
+            line-height: 1.6;
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .options-container {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: #2c3e50;
+            border: 2px solid #34495e;
+            padding: 18px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 18px;
+            color: #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 60px;
+        }
+
+        .option::before {
+            content: "•";
+            font-size: 24px;
+            color: #3498db;
+        }
+
+        .option:hover {
+            background: #34495e;
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .option.wrong {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        /* دکمه‌ها - موقعیت جدید */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-height: 56px;
+        }
+
+        .btn-primary {
+            background: #2980b9;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3498db;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: #7f8c8d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #95a5a6;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(151, 165, 166, 0.4);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #2ecc71;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        /* نتیجه */
+        .result-section {
+            padding: 40px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2980b9 0%, #2c3e50 100%);
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 10px 25px rgba(41, 128, 185, 0.4);
+            position: relative;
+        }
+
+        .motivational-message {
+            font-size: 24px;
+            margin: 15px 0;
+            font-weight: 700;
+            color: #f1c40f;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .result-details {
+            background: #2c3e50;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: right;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .detail-item {
+            margin: 12px 0;
+            font-size: 19px;
+            color: #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .time-up-message {
+            background: #e74c3c;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 19px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            margin-top: 20px;
+            padding: 14px 30px;
+            font-size: 18px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 20px;
+            color: #3498db;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* موبایل */
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 5px;
+                min-height: 520px;
+                border-radius: 15px;
+            }
+            
+            .question-section, .result-section {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            .option {
+                padding: 16px;
+                font-size: 17px;
+            }
+            
+            .start-title {
+                font-size: 28px;
+            }
+            
+            .start-description {
+                font-size: 15px;
+                padding: 0 10px;
+            }
+            
+            .score-circle {
+                width: 130px;
+                height: 130px;
+                font-size: 32px;
+            }
+        }
+
+        /* دسترسی‌پذیری */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="start-screen" id="start-screen">
+            <h1 class="start-title">🎯 مسابقه کوییز</h1>
+            <p class="start-description">
+                به مسابقه کوییز خوش آمدید! 
+                <br>
+                شما ۱۰ سوال دارید و ۲ دقیقه زمان برای پاسخگویی.
+                <br>
+                امتیاز نهایی شما بر اساس پاسخ‌های صحیح محاسبه می‌شود.
+                <br> <b>نکته: سوال اشتباه امتیاز منفی دارد!</b>
+            </p>
+            <button class="start-btn" onclick="startQuiz()">
+                <i class="fas fa-play"></i> شروع مسابقه
+            </button>
+        </div>
+
+        <div class="header" id="quiz-header">
+            <div class="timer" id="timer">02:00</div>
+        </div>
+
+        <div class="question-section" id="question-section">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                در حال بارگذاری سوالات...
+            </div>
+            <div id="question-content" style="display: none;">
+                <div class="question-number" id="question-number"><i class="fas fa-question-circle"></i> سوال شماره 1</div>
+                <div class="question-text" id="question-text">سوال اینجا نمایش داده می‌شود...</div>
+                
+                <div class="options-container" id="options-container"></div>
+
+                <div class="navigation-buttons">
+                    <!-- بعدی در راست -->
+                    <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">
+                        <i class="fas fa-arrow-right"></i> سوال بعدی
+                    </button>
+                    <!-- قبلی در چپ -->
+                    <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()" style="display: none;">
+                        سوال قبلی <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section" id="result-section">
+            <div class="score-circle" id="final-score">0</div>
+            <div class="motivational-message" id="motivational-message">آفرین! 🎉</div>
+            <h2>کارنامه نهایی شما</h2>
+            
+            <div class="result-details">
+                <div class="detail-item">
+                    <span>✅ پاسخ‌های صحیح:</span>
+                    <span id="result-correct">0</span>
+                </div>
+                <div class="detail-item">
+                    <span>❌ پاسخ‌های غلط:</span>
+                    <span id="result-wrong">0</span>
+                </div>
+                <div class="detail-item">
+                    <span>📈 امتیاز خالص:</span>
+                    <span id="net-score">0</span>
+                </div>
+                <div class="detail-item">
+                    <span>⏱ زمان باقیمانده:</span>
+                    <span id="time-left">0</span> ثانیه
+                </div>
+                <div class="detail-item">
+                    <span>❓ پاسخ داده نشده:</span>
+                    <span id="unanswered">0</span>
+                </div>
+            </div>
+
+            <button class="btn btn-success restart-btn" onclick="restartQuiz()">
+                <i class="fas fa-redo"></i> چالش مجدد
+            </button>
+            <button class="btn share-btn" onclick="shareResult()">
+                <i class="fas fa-share-alt"></i> اشتراک‌گذاری نتیجه
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let correctCount = 0;
+        let wrongCount = 0;
+        let timer;
+        let timeLeft = 120;
+        let selectedQuestions = [];
+        let allQuestions = [];
+        let quizStarted = false;
+        let feedbackShown = false;
+
+        // درخواست fullscreen در موبایل
+        function requestFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(() => {});
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            }
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-header').style.display = 'block';
+            document.getElementById('question-section').style.display = 'block';
+            correctCount = 0;
+            wrongCount = 0;
+            currentQuestionIndex = 0;
+            userAnswers = new Array(10).fill(null);
+            timeLeft = 120;
+            updateTimerDisplay();
+            loadQuestions();
+            startTimer();
+            requestFullscreen(); // ورود به حالت تمام‌صفحه
+        }
+
+        async function loadQuestions() {
+            try {
+                const response = await fetch('questions.json');
+                if (!response.ok) throw new Error('فایل سوالات یافت نشد.');
+                const data = await response.json();
+                allQuestions = data.questions;
+                if (!allQuestions || allQuestions.length < 10) {
+                    throw new Error('تعداد سوالات کافی نیست.');
+                }
+                selectRandomQuestions();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('question-content').style.display = 'block';
+                displayCurrentQuestion();
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div style="color: #e74c3c; font-size: 18px;">
+                        ❌ خطا در بارگذاری سوالات!<br>
+                        لطفاً فایل <code>questions.json</code> را بررسی کنید.
+                    </div>
+                    <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:20px;">
+                        تلاش مجدد
+                    </button>
+                `;
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) endQuizDueToTime();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        }
+
+        function endQuizDueToTime() {
+            clearInterval(timer);
+            showResults();
+            const resultSection = document.getElementById('result-section');
+            const timeUpMessage = document.createElement('div');
+            timeUpMessage.className = 'time-up-message';
+            timeUpMessage.innerHTML = '<i class="fas fa-hourglass-end"></i> زمان شما به پایان رسید!';
+            resultSection.insertBefore(timeUpMessage, resultSection.firstChild);
+        }
+
+        function selectRandomQuestions() {
+            const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            selectedQuestions = shuffled.slice(0, 10);
+        }
+
+        function displayCurrentQuestion() {
+            if (selectedQuestions.length === 0) return;
+            const question = selectedQuestions[currentQuestionIndex];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('question-number').innerHTML = 
+                `<i class="fas fa-question-circle"></i> سوال شماره ${currentQuestionIndex + 1}`;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    if (index === question.correct) {
+                        optionElement.classList.add('correct');
+                    } else if (index === userAnswers[currentQuestionIndex]) {
+                        optionElement.classList.add('wrong');
+                    }
+                } else if (userAnswers[currentQuestionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            updateNavigationButtons();
+            feedbackShown = false;
+        }
+
+        function selectOption(optionIndex) {
+            const question = selectedQuestions[currentQuestionIndex];
+            // جلوگیری از تغییر پاسخ پس از نمایش فیدبک
+            if (userAnswers[currentQuestionIndex] !== null && feedbackShown) return;
+
+            // اگر قبلاً پاسخ داده، امتیاز قبلی را حذف کن
+            if (userAnswers[currentQuestionIndex] !== null) {
+                if (userAnswers[currentQuestionIndex] === question.correct) correctCount--;
+                else wrongCount--;
+            }
+
+            userAnswers[currentQuestionIndex] = optionIndex;
+            if (optionIndex === question.correct) correctCount++;
+            else wrongCount++;
+
+            // نمایش فوری نتیجه
+            feedbackShown = true;
+            displayCurrentQuestion();
+
+            // خواندن صوتی (اختیاری)
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(question.question);
+                utterance.lang = 'fa-IR';
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            prevBtn.style.display = currentQuestionIndex === 0 ? 'none' : 'flex';
+            nextBtn.textContent = currentQuestionIndex === selectedQuestions.length - 1 
+                ? 'پایان مسابقه 🏁' 
+                : 'سوال بعدی';
+            nextBtn.innerHTML = currentQuestionIndex === selectedQuestions.length - 1 
+                ? '<i class="fas fa-flag"></i> پایان مسابقه' 
+                : '<i class="fas fa-arrow-right"></i> سوال بعدی';
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < selectedQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayCurrentQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayCurrentQuestion();
+            }
+        }
+
+        function getMotivationalMessage(scorePercent) {
+            if (scorePercent >= 90) return "استاد کوییز! 🌟";
+            if (scorePercent >= 70) return "عالی بود! 🎯";
+            if (scorePercent >= 50) return "خوبه، ولی می‌تونی بهتر! 💪";
+            return "دوباره تلاش کن، موفق می‌شی! ✨";
+        }
+
+        function showResults() {
+            clearInterval(timer);
+            let unanswered = userAnswers.filter(a => a === null).length;
+            let netScore = Math.max(0, correctCount - Math.floor(wrongCount / 2));
+            let finalScore = (netScore / selectedQuestions.length) * 100;
+            const roundedScore = Math.round(finalScore);
+            
+            document.getElementById('final-score').textContent = roundedScore;
+            document.getElementById('motivational-message').textContent = getMotivationalMessage(finalScore);
+            document.getElementById('result-correct').textContent = correctCount;
+            document.getElementById('result-wrong').textContent = wrongCount;
+            document.getElementById('net-score').textContent = netScore;
+            document.getElementById('time-left').textContent = timeLeft;
+            document.getElementById('unanswered').textContent = unanswered;
+            
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('quiz-header').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+        }
+
+        async function shareResult() {
+            const score = document.getElementById('final-score').textContent;
+            const message = `مسابقه کوییز: امتیاز من ${score}% بود! آیا می‌تونی از من بهتر باشی؟`;
+            const url = window.location.href;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'مسابقه کوییز',
+                        text: message,
+                        url: url
+                    });
+                } catch (err) {
+                    copyToClipboard(message);
+                }
+            } else {
+                copyToClipboard(message);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('متن نتیجه در کلیپ‌بورد کپی شد! ✅');
+            }).catch(() => {
+                prompt('کپی کنید:', text);
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-section').style.display = 'none';
+            startQuiz();
+        }
+
+        // جلوگیری از بستن صفحه در حین کوییز
+        window.addEventListener('beforeunload', (e) => {
+            if (quizStarted && timeLeft > 0 && currentQuestionIndex < selectedQuestions.length - 1) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>
