@@ -1,230 +1,139 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کوییز ساده</title>
-    <style>
-        body {
-            background:#f5f7fa;
-            font-family: sans-serif;
-            margin:0;
-            padding:0;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            min-height:100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کوییز ساده</title>
 
-        .box {
-            background:#fff;
-            width:100%;
-            max-width:450px;
-            border:1px solid #ddd;
-            padding:20px;
-            border-radius:10px;
-        }
+<style>
+    body{background:#f5f5f5;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+    .box{background:#fff;width:100%;max-width:420px;padding:20px;border-radius:10px;border:1px solid #ddd}
+    h1{text-align:center;color:#1e73be;font-size:22px;margin-bottom:20px}
+    .question{background:#eef4ff;padding:12px;border-radius:8px;margin-bottom:15px;border:1px solid #cfdcff}
+    .option{background:#f1f1f1;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;cursor:pointer}
+    .correct{background:#caffd3 !important;border-color:#28a745 !important}
+    .wrong{background:#ffd4d4 !important;border-color:#d62828 !important}
+    button{width:100%;background:#1e73be;color:#fff;padding:10px;border:none;border-radius:8px;font-size:15px;margin-top:12px}
+    .small{background:#6c757d}
+    #result{display:none;text-align:center;font-size:18px}
+    .error{background:#ffd4d4;border:1px solid #d62828;padding:10px;border-radius:8px;margin-bottom:10px;display:none;text-align:center}
+</style>
 
-        h1 { font-size:22px; text-align:center; margin-bottom:20px; color:#1e73be; }
-
-        .question-box {
-            background:#eef4ff;
-            padding:15px;
-            border-radius:10px;
-            margin-bottom:20px;
-            border:1px solid #c6d7ff;
-        }
-
-        .option {
-            padding:12px;
-            background:#f5f5f5;
-            margin:10px 0;
-            border-radius:8px;
-            cursor:pointer;
-            border:1px solid #ccc;
-        }
-
-        .option.correct { background:#c6ffd1; border-color:#28a745; }
-        .option.wrong { background:#ffd6d6; border-color:#dc3545; }
-
-        button {
-            width:100%;
-            padding:12px;
-            font-size:16px;
-            cursor:pointer;
-            border:none;
-            background:#1e73be;
-            color:#fff;
-            border-radius:8px;
-            margin-top:15px;
-        }
-
-        .small-btn { background:#6c757d; }
-
-        #result-section { display:none; text-align:center; }
-
-        .error {
-            background:#ffd6d6;
-            border:1px solid #dc3545;
-            padding:15px;
-            border-radius:8px;
-            text-align:center;
-            margin-bottom:20px;
-            color:#b80000;
-        }
-    </style>
 </head>
 <body>
 
 <div class="box">
 
-    <!-- پیام خطا -->
-    <div id="error-box" style="display:none;" class="error"></div>
+    <div id="err" class="error"></div>
 
-    <!-- صفحه شروع -->
-    <div id="start-screen">
+    <div id="start">
         <h1>کوییز ساده</h1>
-        <button onclick="startQuiz()">شروع</button>
+        <button onclick="start()">شروع</button>
     </div>
 
-    <!-- بخش سوال -->
-    <div id="quiz-section" style="display:none;">
-        <div id="question-number"></div>
-        <div class="question-box" id="question-text"></div>
-        <div id="options"></div>
-
-        <button class="small-btn" onclick="prevQuestion()" id="prev-btn" style="display:none;">سوال قبلی</button>
-        <button onclick="nextQuestion()" id="next-btn">سوال بعدی</button>
+    <div id="quiz" style="display:none;">
+        <div id="qnum"></div>
+        <div id="qtxt" class="question"></div>
+        <div id="opts"></div>
+        <button id="prev" class="small" onclick="prev()" style="display:none;">سوال قبلی</button>
+        <button onclick="next()" id="nextbtn">سوال بعدی</button>
     </div>
 
-    <!-- نتیجه -->
-    <div id="result-section">
-        <h1 id="score"></h1>
-        <button onclick="restartQuiz()">چالش مجدد</button>
+    <div id="result">
+        <h1>نتیجه</h1>
+        <div id="score"></div>
+        <button onclick="restart()">چالش مجدد</button>
     </div>
 
 </div>
 
+
 <script>
-    let current = 0;
-    let userAnswers = [];
-    let questions = [];
-    let correct = 0;
-    let wrong = 0;
+let q=[],i=0,ans=[],ok=0,no=0;
 
-    function toPersian(num) {
-        return num.toString().replace(/[0-9]/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+const fa = n => n.toString().replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
+
+async function start(){
+    document.getElementById("start").style.display="none";
+    document.getElementById("quiz").style.display="block";
+
+    try{
+        let res = await fetch("questions.json");
+        let data = await res.json();
+
+        q = data.questions.sort(()=>Math.random()-0.5).slice(0,10);
+        ans = Array(10).fill(null);
+        load();
+    }catch{
+        let e=document.getElementById("err");
+        e.innerHTML="❌ خطا در بارگذاری سوالات";
+        e.style.display="block";
+        document.getElementById("start").style.display="block";
+        document.getElementById("quiz").style.display="none";
     }
+}
 
-    async function startQuiz() {
-        document.getElementById("error-box").style.display = "none";
-        document.getElementById("start-screen").style.display = "none";
-        document.getElementById("quiz-section").style.display = "block";
+function load(){
+    let x = q[i];
 
-        try {
-            const res = await fetch("questions.json");
+    document.getElementById("qnum").innerText = `سوال ${fa(i+1)} از ${fa(10)}`;
+    document.getElementById("qtxt").innerText = x.question;
 
-            if (!res.ok) throw new Error("خطا در لود فایل!");
+    let box = document.getElementById("opts");
+    box.innerHTML="";
 
-            const data = await res.json();
+    x.options.forEach((t,n)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=t;
 
-            if (!data.questions || data.questions.length < 1)
-                throw new Error("هیچ سوالی داخل فایل وجود ندارد.");
-
-            questions = data.questions.sort(() => Math.random() - 0.5).slice(0, 10);
-
-            userAnswers = new Array(10).fill(null);
-
-            loadQuestion();
+        if(ans[i]!==null){
+            if(n===x.correct) d.classList.add("correct");
+            else if(n===ans[i]) d.classList.add("wrong");
+            d.style.pointerEvents="none";
+        } else {
+            d.onclick=()=>choose(n);
         }
-        catch (e) {
-            showError("❌ خطا در بارگذاری سوالات<br>" + e.message);
-            document.getElementById("quiz-section").style.display = "none";
-            document.getElementById("start-screen").style.display = "block";
-        }
-    }
 
-    function showError(msg) {
-        const box = document.getElementById("error-box");
-        box.innerHTML = msg;
-        box.style.display = "block";
-    }
+        box.appendChild(d);
+    });
 
-    function loadQuestion() {
-        const q = questions[current];
+    document.getElementById("prev").style.display = i===0 ? "none" : "block";
+    document.getElementById("nextbtn").innerText = i===9 ? "پایان" : "سوال بعدی";
+}
 
-        document.getElementById("question-number").innerText =
-            `سوال ${toPersian(current + 1)} از ${toPersian(10)}`;
+function choose(n){
+    if(ans[i]!==null) return;
 
-        document.getElementById("question-text").innerText = q.question;
+    ans[i]=n;
+    if(n===q[i].correct) ok++;
+    else no++;
 
-        const box = document.getElementById("options");
-        box.innerHTML = "";
+    load();
+}
 
-        q.options.forEach((text, index) => {
-            let div = document.createElement("div");
-            div.className = "option";
-            div.innerText = text;
+function next(){
+    if(i<9){ i++; load(); }
+    else show();
+}
 
-            if (userAnswers[current] !== null) {
-                if (index === q.correct) div.classList.add("correct");
-                else if (index === userAnswers[current]) div.classList.add("wrong");
-                div.style.pointerEvents = "none";
-            } else {
-                div.onclick = () => selectOption(index);
-            }
+function prev(){
+    if(i>0){ i--; load(); }
+}
 
-            box.appendChild(div);
-        });
+function show(){
+    document.getElementById("quiz").style.display="none";
+    document.getElementById("result").style.display="block";
 
-        document.getElementById("prev-btn").style.display = current === 0 ? "none" : "block";
-        document.getElementById("next-btn").innerText = current === 9 ? "پایان" : "سوال بعدی";
-    }
+    document.getElementById("score").innerText=
+        `✔️ درست: ${fa(ok)}   |   ❌ غلط: ${fa(no)}`;
+}
 
-    function selectOption(i) {
-        if (userAnswers[current] !== null) return;
-
-        const q = questions[current];
-        userAnswers[current] = i;
-
-        if (i === q.correct) correct++;
-        else wrong++;
-
-        loadQuestion();
-    }
-
-    function nextQuestion() {
-        if (current < 9) {
-            current++;
-            loadQuestion();
-        } else showResult();
-    }
-
-    function prevQuestion() {
-        if (current > 0) {
-            current--;
-            loadQuestion();
-        }
-    }
-
-    function showResult() {
-        let score = Math.max(0, correct - Math.floor(wrong / 2));
-        let percent = Math.round((score / 10) * 100);
-
-        document.getElementById("quiz-section").style.display = "none";
-        document.getElementById("result-section").style.display = "block";
-
-        document.getElementById("score").innerText = `امتیاز: ${toPersian(percent)}٪`;
-    }
-
-    function restartQuiz() {
-        current = 0;
-        correct = 0;
-        wrong = 0;
-        userAnswers = [];
-        document.getElementById("result-section").style.display = "none";
-        startQuiz();
-    }
+function restart(){
+    i=0; ok=0; no=0; ans=[];
+    document.getElementById("result").style.display="none";
+    start();
+}
 </script>
 
 </body>
