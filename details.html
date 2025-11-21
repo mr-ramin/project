@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جزئیات فیلم</title>
+  <style>
+    body { font-family: sans-serif; margin:0; padding:25px; background:#f2f2f2; color:#222; display:flex; justify-content:center; }
+    .container { width:100%; max-width:800px; background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.1); }
+    img { width:100%; max-height:450px; object-fit:cover; border-radius:10px; margin-bottom:20px; background:#ddd; }
+    h1 { margin:0 0 10px; font-size:26px; text-align:center; }
+    .info { text-align:center; font-size:15px; margin-bottom:20px; color:#444; }
+    p { font-size:15px; line-height:1.8; text-align:justify; }
+    .back-btn { display:block; width:100%; text-align:center; margin-top:25px; padding:10px 0; background:#2196f3; color:#fff; border-radius:8px; text-decoration:none; font-size:16px; }
+  </style>
+</head>
+<body>
+  <div class="container" id="container"></div>
+  <script>
+    const movies=[
+      {title:'Inception',year:2010,genre:'علمی‌تخیلی',desc:'یک دزد ماهر وارد رویاهای دیگران می‌شود تا اطلاعات سرّی را استخراج یا تزریق کند.',img:'https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SL1188_.jpg'},
+      {title:'Interstellar',year:2014,genre:'علمی‌تخیلی',desc:'گروهی از فضانوردان برای نجات بشریت به سفری میان‌ستاره‌ای می‌روند.',img:'https://m.media-amazon.com/images/I/81p+xe8cbnL._AC_SL1500_.jpg'},
+      {title:'The Dark Knight',year:2008,genre:'اکشن',desc:'بتمن در مواجهه با جوکر وارد تاریک‌ترین نبرد زندگی خود می‌شود.',img:'https://m.media-amazon.com/images/I/91KkWf50SoL._AC_SL1500_.jpg'},
+      {title:'Avatar',year:2009,genre:'فانتزی',desc:'سربازی فلج وارد سیاره پاندورا می‌شود و بین عشق و وظیفه گیر می‌افتد.',img:'https://m.media-amazon.com/images/I/71c05lTE03L._AC_SL1024_.jpg'},
+      {title:'Dune',year:2021,genre:'علمی‌تخیلی',desc:'پسر یک خاندان اشرافی با قدرت‌های اسرارآمیز برای نجات مردمش می‌جنگد.',img:'https://m.media-amazon.com/images/I/81G+o5j5ciL._AC_SL1500_.jpg'},
+      {title:'The Matrix',year:1999,genre:'اکشن',desc:'یک هکر متوجه می‌شود جهان واقعی یک شبیه‌سازی کامپیوتری است.',img:'https://m.media-amazon.com/images/I/71rNJQ2g-XL._AC_SL1024_.jpg'},
+      {title:'Titanic',year:1997,genre:'عاشقانه',desc:'عشق دو جوان در کشتی تایتانیک که در تراژدی تاریخی غرق می‌شود.',img:'https://m.media-amazon.com/images/I/71s9G3p0aqL._AC_SL1000_.jpg'},
+      {title:'Joker',year:2019,genre:'درام',desc:'داستان مردی تنها که جامعه او را به یکی از ترسناک‌ترین جنایتکاران تبدیل می‌کند.',img:'https://m.media-amazon.com/images/I/61OUGpUfAyL._AC_SL1024_.jpg'},
+      {title:'Gladiator',year:2000,genre:'تاریخی',desc:'یک ژنرال رومی برای انتقام از خیانتگران به میدان نبرد بازمی‌گردد.',img:'https://m.media-amazon.com/images/I/81j09spT0IL._AC_SL1500_.jpg'},
+      {title:'John Wick',year:2014,genre:'اکشن',desc:'قاتل افسانه‌ای پس از مرگ همسرش و دزدیده شدن سگش دوباره وارد دنیای تاریک جنایت می‌شود.',img:'https://m.media-amazon.com/images/I/71ULtN43QzL._AC_SL1000_.jpg'}
+    ];
+    const params=new URLSearchParams(window.location.search);
+    const id=parseInt(params.get('id'))||0;
+    const movie=movies[id];
+    const container=document.getElementById('container');
+    container.innerHTML=`<img src='${movie.img}' alt='Poster'><h1>${movie.title}</h1><div class='info'>سال انتشار: ${movie.year} | ژانر: ${movie.genre}</div><p>${movie.desc}</p><a href='index.html' class='back-btn'>بازگشت</a>`;
+  </script>
+</body>
+</html>
